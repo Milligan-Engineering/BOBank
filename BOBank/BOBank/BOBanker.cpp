@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 
@@ -6,17 +7,17 @@ using namespace std;
 int main()
 {
 	// Provide space for storing the player names
-	char player1;
-	char player2;
-	char player3;
-	char player4;
-	char player5;
-	char player6;
+	string player1;
+	string player2;
+	string player3;
+	string player4;
+	string player5;
+	string player6;
 
 	//Provide space for storing the turn times
 	int turnTimeMinutes;
 	int turnTimeSeconds;
-	int secondsPerMinute = 60;
+	double secondsPerMinute = 60;
 
 
 	int value;
