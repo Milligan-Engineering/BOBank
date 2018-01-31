@@ -21,7 +21,7 @@ int main()
 
 
 	int counterPlayers = 1;
-	int numberPlayers;
+	int numberPlayers = 0;
 	int value;
 
 	cout.setf(ios::fixed);
@@ -30,10 +30,12 @@ int main()
 
 	cout << "Welcome to the B&O Banker Assitant \n";
 
-	cout << "Enter number of players. \n";
-	cin >> numberPlayers;
-	cout << "There will be " << numberPlayers << " players. \n";
-
+	while((numberPlayers < 3) || (numberPlayers > 6))
+	{
+		cout << "Enter number of players between 3 and 6. \n";
+		cin >> numberPlayers;
+	}
+		cout << "There will be " << numberPlayers << " players. \n";
 	while(counterPlayers <= numberPlayers)
 	{
 		if (counterPlayers == 1)
