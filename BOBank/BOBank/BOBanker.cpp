@@ -21,12 +21,17 @@ int main()
 
 
 	int value;
+	int numberPlayers;
 
 	cout.setf(ios::fixed);
 	cout.setf(ios::showpoint);
 	cout.precision(2);
 
 	cout << "Welcome to the B&O Banker Assitant \n";
+
+	cout << "Enter number of players. \n";
+	cin >> numberPlayers;
+	cout << "There will be " << numberPlayers << " players. \n";
 
 	cout << "What is the initial of the first player? \n";
 	cin >> player1;
