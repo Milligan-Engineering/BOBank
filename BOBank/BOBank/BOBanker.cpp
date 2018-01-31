@@ -1,18 +1,14 @@
 #include <iostream>
 #include <string>
 using namespace std;
-
+const int maxPlayers = 6;
 
 
 int main()
 {
 	// Provide space for storing the player names
-	string player1;
-	string player2;
-	string player3;
-	string player4;
-	string player5;
-	string player6;
+	string playerName[maxPlayers];
+
 
 	//Provide space for storing the turn times
 	int turnTimeMinutes;
@@ -20,7 +16,7 @@ int main()
 	double secondsPerMinute = 60;
 
 
-	int counterPlayers = 1;
+	int i = 1;
 	int numberPlayers = 0;
 	int value;
 
@@ -36,45 +32,12 @@ int main()
 		cin >> numberPlayers;
 	}
 		cout << "There will be " << numberPlayers << " players. \n";
-	while(counterPlayers <= numberPlayers)
+	while(i <= numberPlayers)
 	{
-		if (counterPlayers == 1)
-		{
-			cout << "What is the name of the first player? \n";
-			cin >> player1;
-			cout << "Player 1 is " << player1 << endl << endl; // echoing input for validation
-		}
-		if (counterPlayers == 2)
-		{
-			cout << "What is the name of the second player? \n";
-			cin >> player2;
-			cout << "Player 2 is " << player2 << endl << endl;
-		}
-		if (counterPlayers == 3)
-		{
-			cout << "What is the name of the third player? \n";
-			cin >> player3;
-			cout << "Player 3 is " << player3 << endl << endl;
-		}
-		if (counterPlayers == 4)
-		{
-			cout << "What is the name of the fourth player? \n";
-			cin >> player4;
-			cout << "Player 4 is " << player4 << endl << endl;
-		}
-		if (counterPlayers == 5)
-		{
-			cout << "What is the name of the fifth player? \n";
-			cin >> player5;
-			cout << "Player 5 is " << player5 << endl << endl;
-		}
-		if (counterPlayers == 6)
-		{
-			cout << "What is the name of the sixth player? \n";
-			cin >> player6;
-			cout << "Player 6 is " << player6 << endl << endl;
-		}
-		counterPlayers++;
+		cout << "What is the name of the player " << i << "? \n";
+		cin >> playerName[i];
+		cout << "Player " << i << " is " << playerName[i] << endl << endl; // echoing input for validation
+		i++;
 	}
 
 	cout << "Enter the desired minutes of turn time: ";
