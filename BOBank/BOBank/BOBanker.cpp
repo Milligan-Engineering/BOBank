@@ -20,8 +20,9 @@ int main()
 	double secondsPerMinute = 60;
 
 
-	int value;
+	int counterPlayers = 1;
 	int numberPlayers;
+	int value;
 
 	cout.setf(ios::fixed);
 	cout.setf(ios::showpoint);
@@ -33,29 +34,46 @@ int main()
 	cin >> numberPlayers;
 	cout << "There will be " << numberPlayers << " players. \n";
 
-	cout << "What is the initial of the first player? \n";
-	cin >> player1;
-	cout << "Player 1 is " << player1 << endl; // echoing input for validation
-
-	cout << "What is the initial of the second player? \n";
-	cin >> player2;
-	cout << "Player 2 is " << player2 << endl;
-
-	cout << "What is the initial of the third player? \n";
-	cin >> player3;
-	cout << "Player 3 is " << player3 << endl;
-
-	cout << "What is the initial of the fourth player? \n";
-	cin >> player4;
-	cout << "Player 4 is " << player4 << endl;
-
-	cout << "What is the initial of the fifth player? \n";
-	cin >> player5;
-	cout << "Player 5 is " << player5 << endl;
-
-	cout << "What is the initial of the sixth player? \n";
-	cin >> player6;
-	cout << "Player 6 is " << player6 << endl;
+	while(counterPlayers <= numberPlayers)
+	{
+		if (counterPlayers == 1)
+		{
+			cout << "What is the name of the first player? \n";
+			cin >> player1;
+			cout << "Player 1 is " << player1 << endl << endl; // echoing input for validation
+		}
+		if (counterPlayers == 2)
+		{
+			cout << "What is the name of the second player? \n";
+			cin >> player2;
+			cout << "Player 2 is " << player2 << endl << endl;
+		}
+		if (counterPlayers == 3)
+		{
+			cout << "What is the name of the third player? \n";
+			cin >> player3;
+			cout << "Player 3 is " << player3 << endl << endl;
+		}
+		if (counterPlayers == 4)
+		{
+			cout << "What is the name of the fourth player? \n";
+			cin >> player4;
+			cout << "Player 4 is " << player4 << endl << endl;
+		}
+		if (counterPlayers == 5)
+		{
+			cout << "What is the name of the fifth player? \n";
+			cin >> player5;
+			cout << "Player 5 is " << player5 << endl << endl;
+		}
+		if (counterPlayers == 6)
+		{
+			cout << "What is the name of the sixth player? \n";
+			cin >> player6;
+			cout << "Player 6 is " << player6 << endl << endl;
+		}
+		counterPlayers++;
+	}
 
 	cout << "Enter the desired minutes of turn time: ";
 	cin >> turnTimeMinutes;
