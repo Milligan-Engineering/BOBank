@@ -16,7 +16,6 @@ int main()
 	double secondsPerMinute = 60;
 
 
-	int i = 0;
 	int numberPlayers = 0;
 	int value;
 
@@ -34,12 +33,11 @@ int main()
 		cout << "There will be " << numberPlayers << " players. \n";
 	
 		
-	while(i < numberPlayers) // Get name for each player
+		for (int i = 0; i < numberPlayers; i++) // Get name for each player
 	{
 		cout << "What is the name of the player " << i << "? \n";
 		cin >> playerName[i];
 		cout << "Player " << i << " is " << playerName[i] << endl << endl; // echoing input for validation
-		i++;
 	}
 
 //  Get turn time 
@@ -53,11 +51,11 @@ int main()
 	cout << "The turn time is " << turnTimeMinutes << " minutes and " << turnTimeSeconds << " seconds or " << turnTimeCombined << " minutes \n";
 
 	int currentPlayer = 0;
-	bool goodInput = false;
+	bool goodInput;
 	char option;
 
 // Menu for player actions
-	while (!goodInput)
+	do
 	{
 		cout << "What would " << playerName[currentPlayer] << " like to do? \n";
 		cout << "   'b' = buy shares\n";
@@ -85,9 +83,9 @@ int main()
 			break;
 		default:
 			cout << "Invalid option. Try agian. \n";
+			goodInput = false;
 		}
-	}
-
+	} while (!goodInput);
 	cout << "Enter character to continue \n";
 	cin >> value;
 
