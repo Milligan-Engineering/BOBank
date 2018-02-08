@@ -12,6 +12,23 @@
 
 using namespace std;
 
+// Function Declarations
+void setupPlayers();
+//Precondition: The maximum number of players is stored in constant maxPlayers
+//Postcondition: Player variables playerName, playerCash, playerTurnorder are populated with initial values
+
+
+void playerInformation();
+//Precondition: Player variables playerName, playerCash, playerTurnorder have their current values.
+//Postcondition: Player information is written to console
+
+void setPlayerTurnorder(int playerNetworth[maxPlayers], int playerTurnorder[maxPlayers]);
+// Preconditions: Current player net worths are passed in playerNetworth and the turn order is passed in playerTurnorder
+// Postcondition: playerTurnorder is reevaluated so that the lowest net worth is first (order =0) and the highest is last (order = numberPlayers).
+
+
+
+
 const int maxPlayers = 6;
 
 
@@ -54,11 +71,13 @@ int main()
 		cout << "Player " << i+1 << " is " << playerName[i] << endl << endl; // echoing input for validation
 	}
 
-// Set random initial turn order
+
 //	long int currentTime = static_cast<long int>(time(0));
 //	srand(currentTime);
 
-	srand(time(0)); // random initialization of pseudorandom variable
+
+// Set random initial turn order
+//	srand(time(0)); // random initialization of pseudorandom variable
 	for (int i = 0; i < numberPlayers; i++)
 	{
 		playerTurnorder[i] = i;	// assign initial turn order
@@ -137,7 +156,7 @@ int main()
 			goodInput = true;
 			break;
 		default:
-			cout << "Invalid option. Try agian. \n";
+			cout << "Invalid option. Try again. \n";
 			goodInput = false;
 		}
 	} while (!goodInput);
