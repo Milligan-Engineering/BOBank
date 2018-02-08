@@ -58,6 +58,7 @@ int main()
 	long int currentTime = static_cast<long int>(time(0));
 	srand(currentTime);
 
+//	srand(time(0)); // random initialization of pseudorandom variable
 	for (int i = 0; i < numberPlayers; i++)
 	{
 		playerTurnorder[i] = i;	// assign initial turn order
