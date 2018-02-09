@@ -23,13 +23,11 @@ void playerInformation(int numberPlayers);
 // The number of players is passed in numberPlayers.
 //Postcondition: Player information is written to console
 
-bool setPlayerTurnorder(int numberPlayers);
+int setPlayerTurnorder(int numberPlayers);
 // Preconditions: Current player cash and turn order are in playerNetworth and playerTurnorder.
 // The number of players is passed in numberPlayers.
 // Postcondition: playerTurnorder is reevaluated so that the lowest cash is first (order =0) and the highest is last (order = numberPlayers).
 // Returns true if successful.
-
-
 
 
 const int maxPlayers = 6;
@@ -133,7 +131,7 @@ int setupPlayers()
 	playerInformation(numberPlayers);
 
 	//Sort players by cash
-	bool test = setPlayerTurnorder(numberPlayers);
+	int test = setPlayerTurnorder(numberPlayers);
 
 	// list players in turnorder
 	playerInformation(numberPlayers);
@@ -162,7 +160,7 @@ void playerInformation(int numberPlayers)
 }
 
 
-bool setPlayerTurnorder(int numberPlayers)
+int setPlayerTurnorder(int numberPlayers)
 {
 	// Determine  player turn order		
 	
@@ -180,7 +178,7 @@ bool setPlayerTurnorder(int numberPlayers)
 			}
 		}
 	}
-	return(true);
+	return(0);
 }
 
 /* 
