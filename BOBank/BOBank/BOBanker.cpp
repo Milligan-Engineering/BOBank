@@ -18,10 +18,10 @@ int setupPlayers();
 //Precondition: The maximum number of players is stored in constant maxPlayers
 //Postcondition: Player variables playerName, playerCash, playerTurnorder are populated with initial values. Returns number of players if sucessful 0 if not.
 
-void playerInformation(int numberPlayers);
-//Precondition: Player variables playerName, playerCash, playerTurnorder have their current values.
-// The number of players is passed in numberPlayers.
-//Postcondition: Player information is written to console
+void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySize);
+//Precondition: Three equal sized arrays of integers are in Array1, 2 and 3.
+//  The size is passed in ArraySize.
+//Postcondition: The values of the three arrays will be output to console seperated by tabs
 
 int setPlayerTurnorder(int numberPlayers);
 // Preconditions: Current player cash and turn order are in playerNetworth and playerTurnorder.
@@ -129,19 +129,23 @@ int setupPlayers()
 
 
 	// list players in turnorder
-	playerInformation(numberPlayers);
+	cout << "Name \t Cash\t Order\t \n";
+	PrintInformation(playerName, playerCash, playerTurnorder, numberPlayers);
 
 	//Sort players by cash
 	int test = setPlayerTurnorder(numberPlayers);
 
-	// list players in turnorder
-	playerInformation(numberPlayers);
 
 	// Set up initial player cash and net worth
 	for (int i = 0; i < numberPlayers; i++)
 	{
 		playerCash[i] = totalInitialCash/numberPlayers;
 	}
+
+	// list players in turnorder
+	cout << "Name \t Cash\t Order\t \n";
+	PrintInformation(playerName, playerCash, playerTurnorder, numberPlayers);
+
 	return(numberPlayers);
 
 }
@@ -149,13 +153,14 @@ int setupPlayers()
 
 
 
-void playerInformation(int numberPlayers)
+void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySize)
 {
-	cout << endl;
-	for (int i = 0; i < numberPlayers; i++)
+
+	for (int i = 0; i < ArraySize; i++)
 	{
-		cout << playerName[playerTurnorder[i]] << " has turn order " << i + 1 << " and $" << playerCash[playerTurnorder[i]] << endl;
+		cout << SArray[playerTurnorder[i]] << " \t " << IArray1[playerTurnorder[i]] << " \t " << IArray2[playerTurnorder[i]] << endl;
 	}
+	cout << endl;
 	return;
 
 }
