@@ -29,6 +29,12 @@ int setPlayerTurnorder(int numberPlayers);
 // Postcondition: playerTurnorder is reevaluated so that the lowest cash is first (order =0) and the highest is last (order = numberPlayers).
 // Returns true if successful.
 
+int Sorter(int Values[], int Order[], int Size);
+//Preconditions: An array with maginitudes stored in Values and the order is stored in Order (0 first, 1 second, ...)
+//The size of the arrays are stored in Size
+//Postcondition: Order is modified so that the smallest value has order 0 the second smallest has order 1 ...
+
+
 
 const int maxPlayers = 6;
 const int totalInitialCash = 1500;
@@ -169,23 +175,32 @@ void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySi
 int setPlayerTurnorder(int numberPlayers)
 {
 	// Determine  player turn order		
-	
 	// Sort players in order of cash
+	Sorter(playerCash, playerTurnorder, numberPlayers);
+	
+	return(0);
+}
+
+int Sorter(int Values[], int Order[], int Size)
+{
 	int temp;
-	for (int i = 0; i < numberPlayers - 1; i++)
+	for (int i = 0; i < Size - 1; i++)
 	{
-		for (int j = 0; j < numberPlayers - i - 1; j++)
+		for (int j = 0; j < Size - i - 1; j++)
 		{
-			if (playerCash[playerTurnorder[j]] > playerCash[playerTurnorder[j + 1]])
+			if (Values[playerTurnorder[j]] > Values[playerTurnorder[j + 1]])
 			{
-				temp = playerTurnorder[j];
-				playerTurnorder[j] = playerTurnorder[j + 1];
-				playerTurnorder[j + 1] = temp;
+				temp = Order[j];
+				Order[j] = Order[j + 1];
+				Order[j + 1] = temp;
 			}
 		}
 	}
 	return(0);
 }
+
+
+
 
 /* 
 double getTurnTime()
