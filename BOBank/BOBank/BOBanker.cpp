@@ -14,16 +14,16 @@
 using namespace std;
 
 // Function Declarations
-int setupPlayers();
+int setupPlayers(string playerName[], int playerCash[], int playerTurnorder[]);
 //Precondition: The maximum number of players is stored in constant maxPlayers
 //Postcondition: Player variables playerName, playerCash, playerTurnorder are populated with initial values. Returns number of players if sucessful 0 if not.
 
-void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySize);
-//Precondition: Three equal sized arrays of integers are in Array1, 2 and 3.
-//  The size is passed in ArraySize.
-//Postcondition: The values of the three arrays will be output to console seperated by tabs
+void PrintInformation(string SArray[], int IArray1[], int OArray[], int ArraySize);
+//Precondition: Equal sized arrays of string and integer are passed SArray1 and IArray1. 
+//The order of the arrays to be printes is passed in OArray and the size is passed in ArraySize.
+//Postcondition: The values of the three arrays will be output to console seperated by tabs in order.
 
-int setPlayerTurnorder(int numberPlayers);
+int setPlayerTurnorder(int cash[], int order[], int numberPlayers);
 // Preconditions: Current player cash and turn order are in playerNetworth and playerTurnorder.
 // The number of players is passed in numberPlayers.
 // Postcondition: playerTurnorder is reevaluated so that the lowest cash is first (order =0) and the highest is last (order = numberPlayers).
@@ -40,15 +40,16 @@ const int maxPlayers = 6;
 const int totalInitialCash = 1500;
 
 // Provide space for storing the player names, turnorder and cash
-string playerName[maxPlayers];
-int playerTurnorder[maxPlayers]; // index 0 stores index of first player
-int playerCash[maxPlayers];
 
 
 int main()
 {
 	int numberPlayers = 0;
 	int value;
+	string playerName[maxPlayers];
+	int playerTurnorder[maxPlayers]; // index 0 stores index of first player
+	int playerCash[maxPlayers];
+
 
 // Use two digits for double output
 	cout.setf(ios::fixed);
@@ -57,7 +58,7 @@ int main()
 
 	cout << "Welcome to the B&O Banker Assitant \n";
 
-	numberPlayers = setupPlayers();
+	numberPlayers = setupPlayers(playerName,playerCash,playerTurnorder);
 
 	int currentPlayer = 0;
 	bool goodInput;
@@ -102,7 +103,7 @@ int main()
 }
 
 
-int setupPlayers()
+int setupPlayers(string playerName[], int playerCash[], int playerTurnorder[])
 {
 	// Set up players names
 	int numberPlayers=0;
@@ -139,8 +140,7 @@ int setupPlayers()
 	PrintInformation(playerName, playerCash, playerTurnorder, numberPlayers);
 
 	//Sort players by cash
-	int test = setPlayerTurnorder(numberPlayers);
-
+	int test = setPlayerTurnorder(playerCash, playerTurnorder, numberPlayers);
 
 	// Set up initial player cash and net worth
 	for (int i = 0; i < numberPlayers; i++)
@@ -159,12 +159,12 @@ int setupPlayers()
 
 
 
-void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySize)
+void PrintInformation(string SArray[], int IArray1[], int OArray[], int ArraySize)
 {
 
 	for (int i = 0; i < ArraySize; i++)
 	{
-		cout << SArray[playerTurnorder[i]] << " \t " << IArray1[playerTurnorder[i]] << " \t " << IArray2[playerTurnorder[i]] << endl;
+		cout << SArray[OArray[i]] << " \t " << IArray1[OArray[i]] << " \t " << OArray[OArray[i]] << endl;
 	}
 	cout << endl;
 	return;
@@ -172,7 +172,7 @@ void PrintInformation(string SArray[], int IArray1[], int IArray2[], int ArraySi
 }
 
 
-int setPlayerTurnorder(int numberPlayers)
+int setPlayerTurnorder(int playerCash[], int playerTurnorder[], int numberPlayers)
 {
 	// Determine  player turn order		
 	// Sort players in order of cash
@@ -188,7 +188,7 @@ int Sorter(int Values[], int Order[], int Size)
 	{
 		for (int j = 0; j < Size - i - 1; j++)
 		{
-			if (Values[playerTurnorder[j]] > Values[playerTurnorder[j + 1]])
+			if (Values[Order[j]] > Values[Order[j + 1]])
 			{
 				temp = Order[j];
 				Order[j] = Order[j + 1];
