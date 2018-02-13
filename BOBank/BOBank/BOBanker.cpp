@@ -1,9 +1,9 @@
 // Filename: BOBanker.cpp 
 // Author: JJ Giesey
 //Email: jjgiesey@milligan.edu
-//Project Milestone: 05 b
+//Project Milestone: 05 c
 //Description: Program to handle banking duites in B&O Boardgame
-//Last Modified: 02/08/18
+//Last Modified: 02/12/18
 
 
 #include <iostream>
@@ -16,22 +16,23 @@ using namespace std;
 // Function Declarations
 int setupPlayers(string playerName[], int playerCash[], int playerTurnorder[]);
 //Precondition: The maximum number of players is stored in constant maxPlayers
-//Postcondition: Player variables playerName, playerCash, playerTurnorder are populated with initial values. Returns number of players if sucessful 0 if not.
+//Postcondition: Player variables playerName, playerCash, playerTurnorder are populated with initial values. 
+//				Returns number of players if sucessful and 0 if not.
 
 void PrintInformation(string SArray[], int IArray1[], int OArray[], int ArraySize);
 //Precondition: Equal sized arrays of string and integer are passed SArray1 and IArray1. 
-//The order of the arrays to be printes is passed in OArray and the size is passed in ArraySize.
+//				The order of the arrays to be printes is passed in OArray and the size is passed in ArraySize.
 //Postcondition: The values of the three arrays will be output to console seperated by tabs in order.
 
 int setPlayerTurnorder(int cash[], int order[], int numberPlayers);
 // Preconditions: Current player cash and turn order are in playerNetworth and playerTurnorder.
-// The number of players is passed in numberPlayers.
+//				The number of players is passed in numberPlayers.
 // Postcondition: playerTurnorder is reevaluated so that the lowest cash is first (order =0) and the highest is last (order = numberPlayers).
-// Returns true if successful.
+//				Returns 0 if successful.
 
 int Sorter(int Values[], int Order[], int Size);
 //Preconditions: An array with maginitudes stored in Values and the order is stored in Order (0 first, 1 second, ...)
-//The size of the arrays are stored in Size
+//				The size of the arrays are stored in Size
 //Postcondition: Order is modified so that the smallest value has order 0 the second smallest has order 1 ...
 
 
