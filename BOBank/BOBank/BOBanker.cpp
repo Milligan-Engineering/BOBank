@@ -2,12 +2,14 @@
 #include <string>
 #include <stdlib.h>     
 #include <time.h>  
+#include <fstream>
 
 using namespace std;
 
 //Constants
 const int maxPlayers = 6;
 const int maxCompanies = 10;
+const int maxTrains = 30;
 const int initialCash[6] = { 1500, 750, 500, 375, 300, 250 };
 const int valuations[26] = { 34, 37, 41, 45, 50, 55, 60, 66, 74, 82, 91, 100, 110, 121, 133, 146, 160, 176, 194, 213, 234, 257, 282, 310, 341, 375 };
 const int initialValuations[6][3] = { { 5, 6, 7 },
@@ -19,6 +21,10 @@ const int companyAvailable[maxCompanies] = { 1,1,1,3,3,1,3,1,1,3 };
 const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York, New Haven & Hartford", "Pennsylvania", "Wabash" };
 const char companyStartcities[maxCompanies][35] = { "Baltimore", "Boston", "Richmond", "Saint Louis", "Buffalo", "Albany", "Richmond", "Saint Louis","Buffalo", "Albany" };
 const int totalInitialCash = 1500;
+const int trainCost[30] = { 100, 95,90,85,80,140,130,120,110,100,200,185,170,155,135,280,260,240,220,200,380,355,330,305,280,500,470,440,410,380 };
+const int trainlevel[30] = { 1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6 };
+const int trainScrap[30] = { 20,20,20,20,20,40,40,40,40,40,60,60,60,60,60,80,80,80,80,80,100,100,100,100,100,120,120,120,120,120 };
+const int trainIndex[30] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30 };
 
 //Global Variables
 int numberPlayers = 3;
@@ -29,7 +35,7 @@ int currentTechlevel = 1; //Actual tech level between 1 and 6
 int levelValuation;
 int playerTurnorder[maxPlayers]; //ordered list of the players in order of play
 int companyTurnorder[maxCompanies] = { 0,1,2,3,4,5,6,7,8,9 };//ordered list of the companies in order of play
-
+char testArray[30];
 
 
 															 // Player Variables
@@ -58,7 +64,9 @@ int companySharesowned[maxCompanies] = { 10,10,10,10,10,10,10,10,10,10 };
 int companyStarted[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
 int companySold[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
 int companyPresident[maxCompanies] = { 5,5,5,5,5,5,5,5,5,5 };
-char tests[10] = "abcdefg";
+// Train Variables
+int trainOwner[30] = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
+
 
 
 // Function Declarations
@@ -134,16 +142,59 @@ int companyPlayerSharesOwned(int currentCompany, const int playerShares[][maxCom
 // in playerShares.
 //Postconditions: function returns the sum of shares currently owned by players
 
+int fetchFileData(string pfileName, int orderPlayers[]);
+//Preconditions: Name of the file is passed in pfileName.
+//Postcondition: Player, company and train arrays are populated with values taken from file.
+//				If successful a 0 is returned.		
+
+int pushFileData(string pfileName);
+//Preconditions: Name of the file is passed in pfileName.
+//Postcondition: Player, company and train arrays are stored in file.
+//				If successful a 0 is returned.		
+
+char readValue(ifstream& inputStream, char cArray[]);
+//Precondtions: Open stream in in inputStrean and character array is returned in cArray
+//Postcondition: Will return last character read.
+
+char findEOL(ifstream& inputStream);
+//Precondition: Stream to be read for end of line is in inputStream
+//				It is expected that all relevant values have been read
+//Postcondition: Stream cleared. Last character returned. Should be /n if successful
+
+
+
 void companyInformation();
 
 
 int main()
 {
 	int playerSuccess;
+	string wfileName;
+	char option;
 
-
+	cout << "BO Banker Program \n \n";
 	//  Set up
-	numberPlayers = setupPlayers(playerName, playerCash, playerTurnorder);
+
+	cout << "Name of game data file:";
+	cin >> wfileName;
+	wfileName = wfileName + ".csv";
+//	strcat_s(wfileName, ".txt");
+	cout << "What would you like to do? \n";
+	cout << "   'n' = Start new game\n";
+	cout << "   'f' = Read game state from file\n";
+	cout << "Option: ";
+	cin >> option;
+	cout << endl;
+
+	switch (option)
+	{
+	case 'f':
+		fetchFileData(wfileName,playerTurnorder);
+		break;
+	default:
+	numberPlayers = setupPlayers(playerName, playerCash, playerTurnorder);	
+	}
+	pushFileData(wfileName);
 	PrintInformation(playerName, playerCash, playerTurnorder, numberPlayers);
 
 	do
@@ -716,3 +767,258 @@ int Sorter(int Values[], int Order[], int Size)
 	}
 	return(0);
 }
+
+
+char readValue(ifstream& inputStream, char cArray[])
+{
+	char getChar;
+	inputStream.get(getChar);
+	int j = 0;
+	while ((getChar != ',') && (getChar != '\n'))
+	{
+		cArray[j] = getChar;
+		j++;
+		inputStream.get(getChar);
+	}
+	cArray[j] = '\0';
+	return(getChar);
+}
+
+char findEOL(ifstream& inputStream)
+{
+	char getChar;
+	do
+	{
+		inputStream.get(getChar);
+	} while (getChar != '\n');
+	return(getChar);
+}
+
+
+int fetchFileData(string pfileName, int orderPlayers[])
+{
+//	int val;
+	char getChar;
+	ifstream inDataStream;
+	int rnumberPlayers = 0;
+	string pName;
+	inDataStream.open(pfileName);
+	if (inDataStream.fail())
+	{
+		cout << "Input file stream open failed \n";
+		return(1);
+	}
+	getChar = readValue(inDataStream, testArray);
+	getChar = readValue(inDataStream, testArray);
+	while (strcmp(testArray, "Done#") != 0)	//Read player names
+	{
+		playerName[rnumberPlayers] = testArray;
+		orderPlayers[rnumberPlayers] = rnumberPlayers;
+		rnumberPlayers++;
+		getChar = readValue(inDataStream, testArray);
+
+	}
+	numberPlayers = rnumberPlayers;
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int i = 0; i < numberPlayers; i++) // Read player cash
+	{
+		getChar = readValue(inDataStream, testArray);
+		playerCash[i] =  atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) // Read player shares owned
+	{
+		for (int i = 0; i < numberPlayers; i++)
+		{
+			getChar = readValue(inDataStream, testArray);
+			playerShares[i] [j] = atoi(testArray);
+		}
+		findEOL(inDataStream);
+		getChar = readValue(inDataStream, testArray);
+	}
+	for (int j = 0; j < maxCompanies; j++) //Read company name (and discard since fixed)
+	{
+		getChar = readValue(inDataStream, testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++)//Read company cash
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyCash[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company net profit
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyNetprofit[j]= atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company valuation
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyValuation[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company presidents
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyPresident[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company shares
+	{
+		getChar = readValue(inDataStream, testArray);
+		companySharesowned[j] =  atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read comapny orphans
+	{
+		getChar = readValue(inDataStream, testArray);
+		companySharesorphaned[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company sold
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyStarted[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int j = 0; j < maxCompanies; j++) //Read company turn order
+	{
+		getChar = readValue(inDataStream, testArray);
+		companyTurnorder[j] = atoi(testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int k = 0; k < 30; k++)
+	{
+		getChar = readValue(inDataStream, testArray);
+	}
+	findEOL(inDataStream);
+	getChar = readValue(inDataStream, testArray);
+	for (int k = 0; k < 30; k++)
+	{
+		getChar = readValue(inDataStream, testArray);
+		trainOwner[k + 1] = atoi(testArray);
+	}
+	for (int k = 0; k < 30; k++)
+	{
+		if (trainOwner[k + 1] != -1)
+			currentTechlevel = (k / 5) + 1;
+	}
+	return(currentTechlevel);
+}
+
+int pushFileData(string pfileName)
+{
+
+	ofstream outDataStream;
+	outDataStream.open(pfileName);
+	if (outDataStream.fail())
+	{
+		cout << "Output file stream open failed \n";
+		return(1);
+	}
+
+	outDataStream << "Name, ";
+	for (int i = 0; i < numberPlayers - 1; i++) // Save player name
+	{
+		outDataStream << playerName[i] << ",";
+	}
+	outDataStream << playerName[numberPlayers - 1] << ",Done#," << "\n";
+	outDataStream << "Cash, ";
+	for (int i = 0; i < numberPlayers - 1; i++) // Save player cash
+	{
+		outDataStream << playerCash[i] << ",";
+	}
+	outDataStream << playerCash[numberPlayers - 1] << ",\n";
+	for (int j = 0; j < maxCompanies; j++) // Save player shares owned
+	{
+		outDataStream << companyName[j] << ",";
+		for (int i = 0; i < numberPlayers - 1; i++)
+		{
+			outDataStream << playerShares[i][ j] << ",";
+		}
+		outDataStream << playerShares[numberPlayers - 1][ j] << ",\n";
+	}
+	outDataStream << "Names, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Save company names
+	{
+		outDataStream << companyName[j] << ",";
+	}
+	outDataStream << companyName[maxCompanies - 1] << ",\n";
+	outDataStream << "Cash, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Save company cash
+	{
+		outDataStream << companyCash[j] << ",";
+	}
+	outDataStream << companyCash[maxCompanies - 1] << ",\n";
+	outDataStream << "NetProfit, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Save company netprofit
+	{
+		outDataStream << companyNetprofit[j] << ",";
+	}
+	outDataStream << companyNetprofit[maxCompanies - 1] << ",\n";
+	outDataStream << "Valuation, ";
+	for (int j = 0; j < maxCompanies - 1; j++) //Save valuation
+	{
+		outDataStream << companyValuation[j] << ",";
+	}
+	outDataStream << companyValuation[maxCompanies - 1] << ",\n";
+
+	outDataStream << "President, ";
+	for (int j = 0; j < maxCompanies - 1; j++) //Save valuation
+	{
+		outDataStream << companyPresident[j] << ",";
+	}
+	outDataStream << companyPresident[maxCompanies - 1] << ",\n";
+	outDataStream << "Shares, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Save Company shares
+	{
+		outDataStream << companySharesowned[j] << ",";
+	}
+	outDataStream << companySharesowned[maxCompanies - 1] << ",\n";
+	outDataStream << "Orphans, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Sace Company orphans
+	{
+		outDataStream << companySharesorphaned[j] << ",";
+	}
+	outDataStream << companySharesorphaned[maxCompanies - 1] << ",\n";
+	outDataStream << "Started, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // SAve company started
+	{
+		outDataStream << companyStarted[j] << ",";
+	}
+	outDataStream << companyStarted[maxCompanies - 1]<< ",\n";
+	outDataStream << "TurnOrder, ";
+	for (int j = 0; j < maxCompanies - 1; j++) // Save company turnorder
+	{
+		outDataStream << companyTurnorder[j] << ",";
+	}
+	outDataStream << companyTurnorder[maxCompanies - 1] << ",\n";
+	outDataStream << "Trains, ";
+	for (int k = 0; k < 29; k++) // Save train owners
+	{
+		outDataStream << k + 1 << ",";
+	}
+	outDataStream << 30 << ",\n";
+	outDataStream << "Owners, ";
+	for (int k = 0; k < 29; k++) // Save train owners
+	{
+		outDataStream << trainOwner[k + 1] << ",";
+	}
+	outDataStream << trainOwner[30] << ",\n";
+	outDataStream.close();
+	return(currentTechlevel);
+}
+
