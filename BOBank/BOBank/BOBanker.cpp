@@ -18,7 +18,7 @@ const int initialValuations[6][3] = { { 5, 6, 7 },
 { 8, 9, 10 },
 { 9, 10, 11 } };
 const int companyAvailable[maxCompanies] = { 1,1,1,3,3,1,3,1,1,3 };
-const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York, New Haven & Hartford", "Pennsylvania", "Wabash" };
+const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York New Haven & Hartford", "Pennsylvania", "Wabash" };
 const char companyStartcities[maxCompanies][35] = { "Baltimore", "Boston", "Richmond", "Saint Louis", "Buffalo", "Albany", "Richmond", "Saint Louis","Buffalo", "Albany" };
 const int totalInitialCash = 1500;
 const int trainCost[30] = { 100, 95,90,85,80,140,130,120,110,100,200,185,170,155,135,280,260,240,220,200,380,355,330,305,280,500,470,440,410,380 };
@@ -931,93 +931,93 @@ int pushFileData(string pfileName)
 	}
 
 	outDataStream << "Name, ";
-	for (int i = 0; i < numberPlayers - 1; i++) // Save player name
+	for (int i = 0; i < numberPlayers; i++) // Save player name
 	{
 		outDataStream << playerName[i] << ",";
 	}
-	outDataStream << playerName[numberPlayers - 1] << ",Done#," << "\n";
+	outDataStream << playerName[numberPlayers] << "Done#," << "\n";
 	outDataStream << "Cash, ";
-	for (int i = 0; i < numberPlayers - 1; i++) // Save player cash
+	for (int i = 0; i < numberPlayers; i++) // Save player cash
 	{
 		outDataStream << playerCash[i] << ",";
 	}
-	outDataStream << playerCash[numberPlayers - 1] << ",\n";
+	outDataStream << "\n";
 	for (int j = 0; j < maxCompanies; j++) // Save player shares owned
 	{
 		outDataStream << companyName[j] << ",";
-		for (int i = 0; i < numberPlayers - 1; i++)
+		for (int i = 0; i < numberPlayers; i++)
 		{
 			outDataStream << playerShares[i][ j] << ",";
 		}
-		outDataStream << playerShares[numberPlayers - 1][ j] << ",\n";
+		outDataStream << "\n";
 	}
 	outDataStream << "Names, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Save company names
+	for (int j = 0; j < maxCompanies; j++) // Save company names
 	{
 		outDataStream << companyName[j] << ",";
 	}
-	outDataStream << companyName[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Cash, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Save company cash
+	for (int j = 0; j < maxCompanies; j++) // Save company cash
 	{
 		outDataStream << companyCash[j] << ",";
 	}
-	outDataStream << companyCash[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "NetProfit, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Save company netprofit
+	for (int j = 0; j < maxCompanies; j++) // Save company netprofit
 	{
 		outDataStream << companyNetprofit[j] << ",";
 	}
-	outDataStream << companyNetprofit[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Valuation, ";
-	for (int j = 0; j < maxCompanies - 1; j++) //Save valuation
+	for (int j = 0; j < maxCompanies; j++) //Save valuation
 	{
 		outDataStream << companyValuation[j] << ",";
 	}
-	outDataStream << companyValuation[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 
 	outDataStream << "President, ";
-	for (int j = 0; j < maxCompanies - 1; j++) //Save valuation
+	for (int j = 0; j < maxCompanies; j++) //Save valuation
 	{
 		outDataStream << companyPresident[j] << ",";
 	}
-	outDataStream << companyPresident[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Shares, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Save Company shares
+	for (int j = 0; j < maxCompanies; j++) // Save Company shares
 	{
 		outDataStream << companySharesowned[j] << ",";
 	}
-	outDataStream << companySharesowned[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Orphans, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Sace Company orphans
+	for (int j = 0; j < maxCompanies; j++) // Sace Company orphans
 	{
 		outDataStream << companySharesorphaned[j] << ",";
 	}
-	outDataStream << companySharesorphaned[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Started, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // SAve company started
+	for (int j = 0; j < maxCompanies; j++) // SAve company started
 	{
 		outDataStream << companyStarted[j] << ",";
 	}
-	outDataStream << companyStarted[maxCompanies - 1]<< ",\n";
+	outDataStream << "\n";
 	outDataStream << "TurnOrder, ";
-	for (int j = 0; j < maxCompanies - 1; j++) // Save company turnorder
+	for (int j = 0; j < maxCompanies; j++) // Save company turnorder
 	{
 		outDataStream << companyTurnorder[j] << ",";
 	}
-	outDataStream << companyTurnorder[maxCompanies - 1] << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Trains, ";
-	for (int k = 0; k < 29; k++) // Save train owners
+	for (int k = 0; k < 30; k++) // Save train numbers
 	{
 		outDataStream << k + 1 << ",";
 	}
-	outDataStream << 30 << ",\n";
+	outDataStream << "\n";
 	outDataStream << "Owners, ";
-	for (int k = 0; k < 29; k++) // Save train owners
+	for (int k = 0; k < 30; k++) // Save train owners
 	{
 		outDataStream << trainOwner[k + 1] << ",";
 	}
-	outDataStream << trainOwner[30] << ",\n";
+	outDataStream << "\n";
 	outDataStream.close();
 	return(currentTechlevel);
 }
