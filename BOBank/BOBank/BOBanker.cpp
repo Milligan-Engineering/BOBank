@@ -93,17 +93,17 @@ int Sorter(int Values[], int Order[], int Size);
 
 int attemptBuy(int currentPlayer);
 //Preconditions: The index of the player planning on buying is passed  in currentPlayer
-//Postconditions: If successful the shares and money of player and company are adjusted and a 1 is returned.
+//Postconditions: If successful the shares and money of player and company are adjusted based on user input and a 1 is returned.
 //				  If not a zero is returned and the reason for failure is output to screen
 
 int attemptSell(int currentPlayer);
 //Preconditions: The index of the player planning on selling is passed  in currentPlayer
-//Postconditions: If successful the shares and money of player and company are adjusted and a 1 is returned.
+//Postconditions: If successful the shares and money of player and company are adjusted based on user input and a 1 is returned.
 //				  If not a zero is returned and the reason for failure is output to screen
 
 int attemptOrphan(int currentPlayer);
 //Preconditions: The index of the player planning on buying orphans for their company is passed  in currentPlayer
-//Postconditions: If successful the shares and money of player and company are adjusted and a 1 is returned.
+//Postconditions: If successful the shares and money of the  company are adjusted based on user input and a 1 is returned.
 //				  If not a zero is returned and the reason for failure is output to screen
 
 
@@ -111,13 +111,13 @@ void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompa
 //Preconditions: The current order of companies is given in companyTurnorder and the valuations are in companyValuations.
 //the company whose value has changed is listed in current Company and the direction of the change is given in
 // direction 1=increase and -1 = decrease.
-//Postcondition: companyTurnorder is modified so that currentCompany is put in its proper place due to the change.
+//Postcondition: companyTurnorder is modified so that currentCompany is put in its proper place (0 is first) due to the change.
 
 int setCompanyPresident(int currentCompany, int playerShares[][maxCompanies], int companyCurrentPresident);
 // Preconditions: currentCompany is a vaild company. The shares ownd by players is passed through playerShares and the current president it passed
 // through companyPresident
 // Postcondidtion: The number of shares owned by each player is compared and if a new player has more shares their number is returned through setCompanyPresident.
-// If not the old president is passed.
+// If not the old president is returned.
 
 void setCompanyValuation(int CurrentCompany, int netProfitChange, char companyDividenPlan);
 //Preconditions: For the company given by CurrentCompany that had a net profit change given by netProfitChange (decrease = -1, increase = 1
@@ -160,6 +160,7 @@ char findEOL(ifstream& inputStream);
 //Precondition: Stream to be read for end of line is in inputStream
 //				It is expected that all relevant values have been read
 //Postcondition: Stream cleared. Last character returned. Should be /n if successful
+
 
 
 
