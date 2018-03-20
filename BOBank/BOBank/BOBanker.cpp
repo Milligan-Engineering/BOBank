@@ -18,8 +18,6 @@ const int initialValuations[6][3] = { { 5, 6, 7 },
 { 7, 8, 9 },
 { 8, 9, 10 },
 { 9, 10, 11 } };
-const int companyAvailable[maxCompanies] = { 1,1,1,3,3,1,3,1,1,3 };
-const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York New Haven & Hartford", "Pennsylvania", "Wabash" };
 const char companyStartcities[maxCompanies][35] = { "Baltimore", "Boston", "Richmond", "Saint Louis", "Buffalo", "Albany", "Richmond", "Saint Louis","Buffalo", "Albany" };
 const int totalInitialCash = 1500;
 
@@ -52,22 +50,12 @@ int playerSold[maxPlayers][maxCompanies] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-// Company Variables
-int companyValuation[maxCompanies] = { 1,1,1,1,1,1,1,1,1,1 };
-int companyNetprofit[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
-int companyCash[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
-int companySharesorphaned[maxCompanies] = { 2,0,3,0,0,0,0,0,0,0 };
-int companySharesowned[maxCompanies] = { 10,10,10,10,10,10,10,10,10,10 };
-int companyStarted[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
-int companySold[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
-int companyPresident[maxCompanies] = { 5,5,5,5,5,5,5,5,5,5 };
-// Train Variables
-
 
 // Structures
 struct Company
 {
 	string name;
+	int available;
 	int cash;
 	int netprofit;
 	int valuation;
@@ -82,28 +70,6 @@ struct Company
 	int trains[maxTrains]; // 0 = never owned, 1=owned, -1 = scrapped
 };
 
-Company BO = { "Baltimore & Ohio", 0,0,5,10,0,6,0,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-Company BM = {"Boston & Maine", 0,0,5,10,0,6,1,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-Company CO = { "Chesapeake & Ohio",0,0,5,10,0,6,2,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-Company ER = { "Erie", 0,0,5,10,0,6,3,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-Company IC = { "Illinois Central", 0,0,5,10,0,6,4,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-Company NY = { "New York Central", 0,0,5,10,0,6,5,0,0,
-	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-Company NP = { "Nickel Plate", 0,0,5,10,0,6,6,0,0};
-Company NH = { "New York New Haven & Hartford", 0,0,5,10,0,6,7,0,0};
-Company PN = {  "Pennsylvania", 0,0,5,10,0,6,8,0,0};
-Company WB;
 
 Company companies[maxCompanies];
 
@@ -166,7 +132,7 @@ int attemptOrphan(int currentPlayer);
 //				  If not a zero is returned and the reason for failure is output to screen
 
 
-void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompany, int companyValuation[]);
+void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompany);
 //Preconditions: The current order of companies is given in companyTurnorder and the valuations are in companyValuations.
 //the company whose value has changed is listed in current Company and the direction of the change is given in
 // direction 1=increase and -1 = decrease.
@@ -233,22 +199,12 @@ int main()
 	char option;
 
 	// initialize company values
-	for (int k = 0; k < maxCities; k++)
-	{
-		NP.cities[k] = NH.cities[k] = PN.cities[k] = false;
-	}
-	for (int k = 0; k < maxCities; k++)
-	{
-		NP.trains[k] = NH.trains[k] = PN.trains[k] = 0;
-	}
-
-
-	WB = BO;
-	WB.name = "Wabash";
-	WB.order = 9;
-
+	const int companyAvailable[maxCompanies] = { 1,1,1,3,3,1,3,1,1,3 };
+	const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York New Haven & Hartford", "Pennsylvania", "Wabash" };
 	for (int j = 0; j < maxCompanies; j++)
 	{
+		companies[j].name = companyName[j];
+		companies[j].available = companyAvailable[j];
 		companies[j].cash = 0;
 		companies[j].netprofit = 0;
 		companies[j].valuation = 0;
@@ -358,22 +314,22 @@ int main()
 		for (int j = 0; j < maxCompanies; j++)
 		{
 			currentCompany = companyTurnorder[j];
-			if (companyStarted[currentCompany] != 0)
+			if (companies[currentCompany].started != 0)
 			{
-				cout << "\n Company " << companyName[currentCompany] << " can build. \n";
+				cout << "\n Company " << companies[currentCompany].name << " can build. \n";
 				do
 				{
-					cout << j << ": " << companyName[currentCompany] << " has $" << companyCash[currentCompany] << " and " << companySharesowned[currentCompany] << " regular shares and " << companySharesorphaned[currentCompany] << " orphaned shares at a value of $" << valuations[companyValuation[currentCompany]] << " per share\n";
+					cout << j << ": " << companies[currentCompany].name << " has $" << companies[currentCompany].cash<< " and " << companies[currentCompany].shares << " regular shares and " << companies[currentCompany].orphans << " orphaned shares at a value of $" << valuations[companies[currentCompany].valuation] << " per share\n";
 					cout << "Enter total build costs (enter 0 to finish building): ";
 					cin >> companyBuildcosts;
-					if (companyBuildcosts <= companyCash[currentCompany])
+					if (companyBuildcosts <= companies[currentCompany].cash)
 					{
-						companyCash[currentCompany] = companyCash[currentCompany] - companyBuildcosts;
-						cout << companyName[currentCompany] << " built $" << companyBuildcosts << " and has $" << companyCash[currentCompany] << " cash \n";
+						companies[currentCompany].cash = companies[currentCompany].cash - companyBuildcosts;
+						cout << companies[currentCompany].name << " built $" << companyBuildcosts << " and has $" << companies[currentCompany].cash << " cash \n";
 					}
 					else
 					{
-						cout << companyName[currentCompany] << " does not have enough cash to build $" << companyBuildcosts << endl;
+						cout << companies[currentCompany].name << " does not have enough cash to build $" << companyBuildcosts << endl;
 					}
 				} while (companyBuildcosts != 0);
 				companyConfirm = 'n';
@@ -381,30 +337,30 @@ int main()
 				{
 					cout << "Finished building. Enter new net profit $";
 					cin >> companyNewNetprofit;
-					cout << "New net profit for " << companyName[currentCompany] << " is $" << companyNewNetprofit << ". Is this correct? (y/n) \n";
+					cout << "New net profit for " << companies[currentCompany].name << " is $" << companyNewNetprofit << ". Is this correct? (y/n) \n";
 					cin >> companyConfirm;
 				} while (companyConfirm != 'y');
 				companyConfirm = 'n';
-				if (companyNewNetprofit > companyNetprofit[currentCompany])
+				if (companyNewNetprofit > companies[currentCompany].netprofit)
 					netprofitChange = 1;
-				else if (companyNewNetprofit < companyNetprofit[currentCompany])
+				else if (companyNewNetprofit < companies[currentCompany].netprofit)
 					netprofitChange = -1;
 				else
 					netprofitChange = 0;
-				companyNetprofit[currentCompany] = companyNewNetprofit;
+				companies[currentCompany].netprofit = companyNewNetprofit;
 				do
 				{
 					cout << "Do you want to distribute=d or withold=w dividens? ";
 					cin >> companyDividenPlan;
 					if (companyDividenPlan == 'd')
 					{
-						cout << companyName[currentCompany] << " would like to distribute dividens, Is this correct? (y/n) \n";
+						cout << companies[currentCompany].name << " would like to distribute dividens, Is this correct? (y/n) \n";
 						cin >> companyConfirm;
 						setCompanyDividens(currentCompany, companyDividenPlan);
 					}
 					else if (companyDividenPlan == 'w')
 					{
-						cout << companyName[currentCompany] << " would like to withhold dividens, Is this correct? (y/n) \n";
+						cout << companies[currentCompany].name << " would like to withhold dividens, Is this correct? (y/n) \n";
 						cin >> companyConfirm;
 						setCompanyDividens(currentCompany, companyDividenPlan);
 					}
@@ -500,32 +456,32 @@ int setPlayerTurnorder(int playerCash[], int playerTurnorder[], int numberPlayer
 
 void decreaseCompanyValuation(int currentCompany)
 {
-	if (companyValuation[currentCompany] > 0)
+	if (companies[currentCompany].valuation> 0)
 	{
-		companyValuation[currentCompany] --;
-		cout << companyName[currentCompany] << " has valuation reduced to $" << valuations[companyValuation[currentCompany]] << " per share \n";
+		companies[currentCompany].valuation --;
+		cout << companies[currentCompany].name << " has valuation reduced to $" << valuations[companies[currentCompany].valuation] << " per share \n";
 	}
 	else
 	{
-		cout << companyName[currentCompany] << " valuations remains at $" << valuations[companyValuation[currentCompany]] << " per share \n";
+		cout << companies[currentCompany].name << " valuations remains at $" << valuations[companies[currentCompany].valuation] << " per share \n";
 	}
-	setCompanyTurnorder(-1, companyTurnorder, currentCompany, companyValuation);
+	setCompanyTurnorder(-1, companyTurnorder, currentCompany);
 	companyInformation();
 	return;
 }
 
 void increaseCompanyValuation(int currentCompany)
 {
-	if (companyValuation[currentCompany] < 26)
+	if (companies[currentCompany].valuation < 26)
 	{
-		companyValuation[currentCompany] ++;
-		cout << companyName[currentCompany] << " has valuation increased to $" << valuations[companyValuation[currentCompany]] << " per share \n";
+		companies[currentCompany].valuation ++;
+		cout << companies[currentCompany].name << " has valuation increased to $" << valuations[companies[currentCompany].valuation] << " per share \n";
 	}
 	else
 	{
-		cout << companyName[currentCompany] << " valuations remains at $" << valuations[companyValuation[currentCompany]] << " per share \n";
+		cout << companies[currentCompany].name << " valuations remains at $" << valuations[companies[currentCompany].valuation] << " per share \n";
 	}
-	setCompanyTurnorder(1, companyTurnorder, currentCompany, companyValuation);
+	setCompanyTurnorder(1, companyTurnorder, currentCompany);
 	companyInformation();
 	return;
 }
@@ -543,51 +499,51 @@ int attemptBuy(int currentPlayer)
 	//List shares for sale
 	for (int j = 0; j < maxCompanies; j++)
 	{
-		if (companyAvailable[j] <= currentTechlevel)
+		if (companies[j].available <= currentTechlevel)
 		{
 			if (playerSold[currentPlayer][j] != 1)
 			{
-				if (companyStarted[j] == 0)
+				if (companies[j].started == 0)
 				{
-					cout << j << ": " << companyName[j] << " is available to be started at $" << valuations[initialValuations[currentTechlevel - 1][0]] << ", $" << valuations[initialValuations[currentTechlevel - 1][1]] << " or $" << valuations[initialValuations[currentTechlevel - 1][2]] << " per share\n";
+					cout << j << ": " << companies[j].name << " is available to be started at $" << valuations[initialValuations[currentTechlevel - 1][0]] << ", $" << valuations[initialValuations[currentTechlevel - 1][1]] << " or $" << valuations[initialValuations[currentTechlevel - 1][2]] << " per share\n";
 				}
 				else
 				{
-					cout << j << ": " << companyName[j] << " has " << companySharesowned[j] << " shares available at $" << valuations[companyValuation[j]] << " per share. \n";
+					cout << j << ": " << companies[j].name << " has " << companies[j].shares << " shares available at $" << valuations[companies[j].valuation] << " per share. \n";
 				}
 			}
 		}
 	}
 	cin >> currentCompany;
 	//Check if company available
-	if (companyAvailable[currentCompany] != 1)
+	if (companies[currentCompany].available != 1)
 	{
-		cout << "Company " << companyName[currentCompany] << " is not available. \n";
+		cout << "Company " << companies[currentCompany].name << " is not available. \n";
 		return 0;
 	}
 	// Check to see if company has not been started and needs intial value set
-	if (companyStarted[currentCompany] == 0)
+	if (companies[currentCompany].started == 0)
 	{
 		cout << "\t 1: $" << valuations[initialValuations[currentTechlevel - 1][0]] << endl;
 		cout << "\t 2: $" << valuations[initialValuations[currentTechlevel - 1][1]] << endl;
 		cout << "\t 3: $" << valuations[initialValuations[currentTechlevel - 1][2]] << endl;
-		cout << "Select inital company valuation for " << companyName[currentCompany] << " :";
+		cout << "Select inital company valuation for " << companies[currentCompany].name << " :";
 		cin >> levelValuation;
 		companyRequestValuation = initialValuations[currentTechlevel - 1][levelValuation - 1];
-		setCompanyTurnorder(1, companyTurnorder, currentCompany, companyValuation);
+		setCompanyTurnorder(1, companyTurnorder, currentCompany);
 		companyInformation();
-		cout << companyName[currentCompany] << " has requested an intial valuations of $" << valuations[companyRequestValuation] << " per share \n";
+		cout << companies[currentCompany].name << " has requested an intial valuations of $" << valuations[companyRequestValuation] << " per share \n";
 	}
 	else
 	{
-		companyRequestValuation = companyValuation[currentCompany];
+		companyRequestValuation = companies[currentCompany].valuation;
 	}
-	cout << "How many shares of " << companyName[currentCompany] << " do you want to buy: ";
+	cout << "How many shares of " << companies[currentCompany].name << " do you want to buy: ";
 	cin >> numberShares;
 	// check validity of request
-	if (numberShares > companySharesowned[currentCompany])
+	if (numberShares > companies[currentCompany].shares)
 	{
-		cout << "Only " << companySharesowned[currentCompany] << " shares available.\n";
+		cout << "Only " << companies[currentCompany].shares << " shares available.\n";
 		return 0;
 	}
 	else if (numberShares*valuations[companyRequestValuation] > playerCash[currentPlayer])
@@ -597,15 +553,15 @@ int attemptBuy(int currentPlayer)
 	}
 	else // Proceed with sale
 	{
-		companyStarted[currentCompany] = 1;
-		companyValuation[currentCompany] = companyRequestValuation;
-		companySharesowned[currentCompany] = companySharesowned[currentCompany] - numberShares;
+		companies[currentCompany].started= 1;
+		companies[currentCompany].valuation = companyRequestValuation;
+		companies[currentCompany].shares = companies[currentCompany].shares - numberShares;
 		playerShares[currentPlayer][currentCompany] = playerShares[currentPlayer][currentCompany] + numberShares;
-		playerCash[currentPlayer] = playerCash[currentPlayer] - numberShares * valuations[companyValuation[currentCompany]];
-		companyCash[currentCompany] = companyCash[currentCompany] + numberShares * valuations[companyValuation[currentCompany]];
-		cout << companyName[currentCompany] << " now has $" << companyCash[currentCompany] << " and " << companySharesowned[currentCompany] << " regular shares and " << companySharesorphaned[currentCompany] << " orphaned shares \n";
-		cout << playerName[currentPlayer] << " now has " << playerShares[currentPlayer][currentCompany] << " shares of " << companyName[currentCompany] << endl;
-		companyPresident[currentCompany] = setCompanyPresident(currentCompany, playerShares, companyPresident[currentCompany]);
+		playerCash[currentPlayer] = playerCash[currentPlayer] - numberShares * valuations[companies[currentCompany].valuation];
+		companies[currentCompany].cash = companies[currentCompany].cash + numberShares * valuations[companies[currentCompany].valuation];
+		cout << companies[currentCompany].name << " now has $" << companies[currentCompany].cash << " and " << companies[currentCompany].shares << " regular shares and " << companies[currentCompany].orphans << " orphaned shares \n";
+		cout << playerName[currentPlayer] << " now has " << playerShares[currentPlayer][currentCompany] << " shares of " << companies[currentCompany].name << endl;
+		companies[currentCompany].president = setCompanyPresident(currentCompany, playerShares, companies[currentCompany].president);
 		return 1;
 	}
 }
@@ -619,12 +575,12 @@ int attemptSell(int currentPlayer)
 	{
 		if (playerShares[currentPlayer][j] != 0)
 		{
-			cout << j << " " << companyName[j] << ": " << playerShares[currentPlayer][j] << " at $" << valuations[companyValuation[j]] << " per share \n";
+			cout << j << " " << companies[j].name << ": " << playerShares[currentPlayer][j] << " at $" << valuations[companies[j].valuation] << " per share \n";
 		}
 	}
 	cout << "Select company to sell from:\n";
 	cin >> currentCompany;
-	cout << "How many shares of " << companyName[currentCompany] << " do you want to sell: ";
+	cout << "How many shares of " << companies[currentCompany].name << " do you want to sell: ";
 	cin >> numberShares;
 	// check validity of request
 	if (numberShares > playerShares[currentPlayer][currentCompany])
@@ -634,19 +590,19 @@ int attemptSell(int currentPlayer)
 	}
 	else if (companyPlayerSharesOwned(currentCompany, playerShares) - numberShares <1)
 	{
-		cout << "Can not sell all shares of company " << companyName[currentCompany] << ". Reduce request. \n";
+		cout << "Can not sell all shares of company " << companies[currentCompany].name << ". Reduce request. \n";
 		return 0;
 	}
 	{
-		companySharesorphaned[currentCompany] = companySharesorphaned[currentCompany] + numberShares;
+		companies[currentCompany].orphans = companies[currentCompany].orphans + numberShares;
 		playerShares[currentPlayer][currentCompany] = playerShares[currentPlayer][currentCompany] - numberShares;
-		playerCash[currentPlayer] = playerCash[currentPlayer] + numberShares * valuations[companyValuation[currentCompany]];
-		cout << companyName[currentCompany] << " now has $" << companyCash[currentCompany] << " and " << companySharesowned[currentCompany] << " regular shares and " << companySharesorphaned[currentCompany] << " orphaned shares \n";
-		cout << playerName[currentPlayer] << " now has " << playerShares[currentPlayer][currentCompany] << " shares of " << companyName[currentCompany] << endl;
-		companyPresident[currentCompany] = setCompanyPresident(currentCompany, playerShares, companyPresident[currentCompany]);
+		playerCash[currentPlayer] = playerCash[currentPlayer] + numberShares * valuations[companies[currentCompany].valuation];
+		cout << companies[currentCompany].name << " now has $" << companies[currentCompany].cash << " and " << companies[currentCompany].shares << " regular shares and " << companies[currentCompany].orphans << " orphaned shares \n";
+		cout << playerName[currentPlayer] << " now has " << playerShares[currentPlayer][currentCompany] << " shares of " << companies[currentCompany].name << endl;
+		companies[currentCompany].president = setCompanyPresident(currentCompany, playerShares, companies[currentCompany].president);
 		// reduce evaluation if first sale of round
 		playerSold[currentPlayer][currentCompany] = 1;
-		decreaseCompanyValuation(currentCompany);
+		decreaseCompanyValuation( currentCompany);
 		return 0;
 	}
 
@@ -662,9 +618,9 @@ int attemptOrphan(int currentPlayer)
 	//List orphaned shares for sale
 	for (int j = 0; j < maxCompanies; j++)
 	{
-		if (companySharesorphaned[j] != 0 && currentPlayer == companyPresident[j])
+		if (companies[j].orphans != 0 && currentPlayer == companies[j].president)
 		{
-			cout << j << ": " << companyName[j] << " has " << companySharesorphaned[j] << " orphaned shares available at $" << valuations[companyValuation[j]] << " per share. \n";
+			cout << j << ": " << companies[j].name << " has " << companies[j].orphans << " orphaned shares available at $" << valuations[companies[currentCompany].valuation] << " per share. \n";
 			numberOrphanCompaniesControlled++;
 		}
 	}
@@ -674,31 +630,31 @@ int attemptOrphan(int currentPlayer)
 		return 0;
 	}
 	cin >> currentCompany;
-	if (currentPlayer != companyPresident[currentCompany])
+	if (currentPlayer != companies[currentCompany].president)
 	{
-		cout << "Only " << companyName[currentCompany] << " president, " << playerName[currentPlayer] << " can buy orphan shares on behalf of company \n";
+		cout << "Only " << companies[currentCompany].name << " president, " << playerName[currentPlayer] << " can buy orphan shares on behalf of company \n";
 		return 0;
 	}
-	cout << "How many orphaned shares of " << companyName[currentCompany] << " do you want to buy back: ";
-	cout << companyName[currentCompany] << " has $" << companyCash[currentCompany] << endl;
+	cout << "How many orphaned shares of " << companies[currentCompany].name << " do you want to buy back: ";
+	cout << companies[currentCompany].name << " has $" << companies[currentCompany].cash << endl;
 	cin >> numberShares;
 	// check validity of request
-	if (numberShares > companySharesorphaned[currentCompany])
+	if (numberShares > companies[currentCompany].orphans)
 	{
-		cout << "Only " << companySharesorphaned[currentCompany] << " shares available.\n";
+		cout << "Only " << companies[currentCompany].orphans << " shares available.\n";
 		return 0;
 	}
-	else if (numberShares*valuations[companyValuation[currentCompany]] > companyCash[currentCompany])
+	else if (numberShares*valuations[companies[currentCompany].valuation] > companies[currentCompany].cash)
 	{
-		cout << "Need " << numberShares * valuations[companyValuation[currentCompany]] << " for purchase\n";
+		cout << "Need " << numberShares * valuations[companies[currentCompany].valuation] << " for purchase\n";
 		return 0;
 	}
 	else
 	{
-		companySharesorphaned[currentCompany] = companySharesorphaned[currentCompany] - numberShares;
-		companySharesowned[currentCompany] = companySharesowned[currentCompany] + numberShares;
-		companyCash[currentCompany] = companyCash[currentCompany] - numberShares * valuations[companyValuation[currentCompany]];
-		cout << companyName[currentCompany] << " now has " << companySharesowned[currentCompany] << " regular shares and " << companySharesorphaned[currentCompany] << " orphaned shares \n";
+		companies[currentCompany].orphans = companies[currentCompany].orphans - numberShares;
+		companies[currentCompany].shares = companies[currentCompany].shares + numberShares;
+		companies[currentCompany].cash= companies[currentCompany].cash - numberShares * valuations[companies[currentCompany].valuation];
+		cout << companies[currentCompany].name << " now has " << companies[currentCompany].shares << " regular shares and " << companies[currentCompany].orphans << " orphaned shares \n";
 		return 1;
 	}
 }
@@ -712,7 +668,7 @@ int setCompanyPresident(int currentCompany, int playerShares[][maxCompanies], in
 		if (playerShares[i][currentCompany] > playerShares[companyPresident][currentCompany])
 		{
 			companyPresident = i;
-			cout << "New president for " << companyName[currentCompany] << " is " << playerName[i] << endl;
+			cout << "New president for " << companies[currentCompany].name << " is " << playerName[i] << endl;
 		}
 	}
 	return(companyPresident);
@@ -724,17 +680,17 @@ void companyInformation()
 	for (int j = 0; j < maxCompanies; j++)
 	{
 		currentCompany = companyTurnorder[j];
-		if (companyStarted[currentCompany] == 1)
+		if (companies[currentCompany].started == 1)
 		{
-			cout << j << ": " << companyName[currentCompany] << " now has $" << companyCash[currentCompany] << " and " << companySharesowned[currentCompany] << " regular shares and " << companySharesorphaned[currentCompany] << " orphaned shares at a value of $" << valuations[companyValuation[currentCompany]] << " per share\n";
+			cout << j << ": " << companies[currentCompany].name << " now has $" << companies[currentCompany].cash << " and " << companies[currentCompany].shares << " regular shares and " << companies[currentCompany].orphans << " orphaned shares at a value of $" << valuations[companies[currentCompany].valuation] << " per share\n";
 		}
-		else if (companyAvailable[currentCompany] > currentTechlevel)
+		else if (companies[currentCompany].available > currentTechlevel)
 		{
-			cout << j << ": " << companyName[currentCompany] << " is not available\n";
+			cout << j << ": " << companies[currentCompany].name << " is not available\n";
 		}
 		else
 		{
-			cout << j << ": " << companyName[currentCompany] << " is not started\n";
+			cout << j << ": " << companies[currentCompany].name << " is not started\n";
 		}
 	}
 	return;
@@ -748,7 +704,7 @@ void playerInformation()
 		playerNetworth[i] = playerCash[i];
 		for (int j = 0; j < maxCompanies; j++)
 		{
-			playerNetworth[i] = playerNetworth[i] + playerShares[i][j] * valuations[companyValuation[j]];
+			playerNetworth[i] = playerNetworth[i] + playerShares[i][j] * valuations[companies[j].valuation];
 		}
 	}
 	// List player cash and net worth in turn order
@@ -761,7 +717,7 @@ void playerInformation()
 
 }
 
-void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompany, int companyValuation[])
+void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompany)
 {
 	int jstart;
 	if (direction == 0) // Valuation decrement
@@ -773,7 +729,7 @@ void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompa
 		}
 		for (int j = jstart + 1; j < maxCompanies; j--)
 		{
-			if (companyValuation[currentCompany] < companyValuation[companyTurnorder[j]])
+			if (companies[currentCompany].valuation < companies[companyTurnorder[j]].valuation)
 			{
 				companyTurnorder[j - 1] = companyTurnorder[j];
 				companyTurnorder[j] = currentCompany;
@@ -790,7 +746,7 @@ void setCompanyTurnorder(int direction, int companyTurnorder[], int currentCompa
 		}
 		for (int j = jstart - 1; j >= 0; j--)
 		{
-			if (companyValuation[currentCompany] > companyValuation[companyTurnorder[j]])
+			if (companies[j].valuation > companies[companyTurnorder[j]].valuation)
 			{
 				companyTurnorder[j + 1] = companyTurnorder[j];
 				companyTurnorder[j] = currentCompany;
@@ -820,12 +776,12 @@ void setCompanyValuation(int CurrentCompany, int netProfitChange, char companyDi
 
 void setCompanyDividens(int currentCompany, char companyDividenPlan)
 {
-	companyCash[currentCompany] = companyCash[currentCompany] + companySharesowned[currentCompany] * companyNetprofit[currentCompany] / 10;
+	companies[currentCompany].cash = companies[currentCompany].cash + companies[currentCompany].shares * companies[currentCompany].netprofit / 10;
 	if (companyDividenPlan == 'd')
 	{
 		for (int i = 0; i < numberPlayers; i++)
 		{
-			playerCash[i] = playerCash[i] + playerShares[i][currentCompany] * companyNetprofit[currentCompany] / 10;
+			playerCash[i] = playerCash[i] + playerShares[i][currentCompany] * companies[currentCompany].netprofit/ 10;
 		}
 		return;
 	}
@@ -833,7 +789,7 @@ void setCompanyDividens(int currentCompany, char companyDividenPlan)
 	{
 		for (int i = 0; i < numberPlayers; i++)
 		{
-			companyCash[currentCompany] = companyCash[currentCompany] + playerShares[i][currentCompany] * companyNetprofit[currentCompany] / 10;
+			companies[currentCompany].cash = companies[currentCompany].cash + playerShares[i][currentCompany] * companies[currentCompany].netprofit / 10;
 		}
 		return;
 
@@ -947,56 +903,56 @@ int fetchFileData(string pfileName, int orderPlayers[])
 	for (int j = 0; j < maxCompanies; j++)//Read company cash
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyCash[j] = atoi(testArray);
+		companies[j].cash = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company net profit
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyNetprofit[j]= atoi(testArray);
+		companies[j].netprofit= atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company valuation
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyValuation[j] = atoi(testArray);
+		companies[j].valuation = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company presidents
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyPresident[j] = atoi(testArray);
+		companies[j].president = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company shares
 	{
 		getChar = readValue(inDataStream, testArray);
-		companySharesowned[j] =  atoi(testArray);
+		companies[j].shares =  atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read comapny orphans
 	{
 		getChar = readValue(inDataStream, testArray);
-		companySharesorphaned[j] = atoi(testArray);
+		companies[j].orphans = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company sold
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyStarted[j] = atoi(testArray);
+		companies[j].started = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
 	for (int j = 0; j < maxCompanies; j++) //Read company turn order
 	{
 		getChar = readValue(inDataStream, testArray);
-		companyTurnorder[j] = atoi(testArray);
+		companies[j].order = atoi(testArray);
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
@@ -1051,7 +1007,7 @@ int pushFileData(string pfileName)
 	outDataStream << "\n";
 	for (int j = 0; j < maxCompanies; j++) // Save player shares owned
 	{
-		outDataStream << companyName[j] << ",";
+		outDataStream << companies[j].name << ",";
 		for (int i = 0; i < numberPlayers; i++)
 		{
 			outDataStream << playerShares[i][ j] << ",";
@@ -1061,56 +1017,56 @@ int pushFileData(string pfileName)
 	outDataStream << "Names, ";
 	for (int j = 0; j < maxCompanies; j++) // Save company names
 	{
-		outDataStream << companyName[j] << ",";
+		outDataStream << companies[j].name << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "Cash, ";
 	for (int j = 0; j < maxCompanies; j++) // Save company cash
 	{
-		outDataStream << companyCash[j] << ",";
+		outDataStream << companies[j].cash << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "NetProfit, ";
 	for (int j = 0; j < maxCompanies; j++) // Save company netprofit
 	{
-		outDataStream << companyNetprofit[j] << ",";
+		outDataStream << companies[j].netprofit << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "Valuation, ";
 	for (int j = 0; j < maxCompanies; j++) //Save valuation
 	{
-		outDataStream << companyValuation[j] << ",";
+		outDataStream << companies[j].valuation << ",";
 	}
 	outDataStream << "\n";
 
 	outDataStream << "President, ";
 	for (int j = 0; j < maxCompanies; j++) //Save valuation
 	{
-		outDataStream << companyPresident[j] << ",";
+		outDataStream << companies[j].president << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "Shares, ";
 	for (int j = 0; j < maxCompanies; j++) // Save Company shares
 	{
-		outDataStream << companySharesowned[j] << ",";
+		outDataStream << companies[j].shares << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "Orphans, ";
 	for (int j = 0; j < maxCompanies; j++) // Sace Company orphans
 	{
-		outDataStream << companySharesorphaned[j] << ",";
+		outDataStream << companies[j].orphans << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "Started, ";
 	for (int j = 0; j < maxCompanies; j++) // SAve company started
 	{
-		outDataStream << companyStarted[j] << ",";
+		outDataStream << companies[j].started << ",";
 	}
 	outDataStream << "\n";
 	outDataStream << "TurnOrder, ";
 	for (int j = 0; j < maxCompanies; j++) // Save company turnorder
 	{
-		outDataStream << companyTurnorder[j] << ",";
+		outDataStream << companies[j].order << ",";
 	}
 	outDataStream << "\n";
 	for (int m = 0; m < maxCities; m++) // Save cities
