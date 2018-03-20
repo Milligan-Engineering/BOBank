@@ -10,6 +10,7 @@ using namespace std;
 const int maxPlayers = 6;
 const int maxCompanies = 10;
 const int maxTrains = 30;
+const int maxCities = 40;
 const int initialCash[6] = { 1500, 750, 500, 375, 300, 250 };
 const int valuations[26] = { 34, 37, 41, 45, 50, 55, 60, 66, 74, 82, 91, 100, 110, 121, 133, 146, 160, 176, 194, 213, 234, 257, 282, 310, 341, 375 };
 const int initialValuations[6][3] = { { 5, 6, 7 },
@@ -21,10 +22,6 @@ const int companyAvailable[maxCompanies] = { 1,1,1,3,3,1,3,1,1,3 };
 const char companyName[maxCompanies][35] = { "Baltimore & Ohio", "Boston & Maine", "Chesapeake & Ohio", "Illinois Central", "Erie", "New York Central","Nickel Plate", "New York New Haven & Hartford", "Pennsylvania", "Wabash" };
 const char companyStartcities[maxCompanies][35] = { "Baltimore", "Boston", "Richmond", "Saint Louis", "Buffalo", "Albany", "Richmond", "Saint Louis","Buffalo", "Albany" };
 const int totalInitialCash = 1500;
-const int trainCost[30] = { 100, 95,90,85,80,140,130,120,110,100,200,185,170,155,135,280,260,240,220,200,380,355,330,305,280,500,470,440,410,380 };
-const int trainlevel[30] = { 1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6 };
-const int trainScrap[30] = { 20,20,20,20,20,40,40,40,40,40,60,60,60,60,60,80,80,80,80,80,100,100,100,100,100,120,120,120,120,120 };
-const int trainIndex[30] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30 };
 
 //Global Variables
 int numberPlayers = 3;
@@ -65,9 +62,71 @@ int companyStarted[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
 int companySold[maxCompanies] = { 0,0,0,0,0,0,0,0,0,0 };
 int companyPresident[maxCompanies] = { 5,5,5,5,5,5,5,5,5,5 };
 // Train Variables
-int trainOwner[30] = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
 
 
+// Structures
+struct Company
+{
+	string name;
+	int cash;
+	int netprofit;
+	int valuation;
+	int shares;
+	int orphans;
+	int president;
+	int order;
+	bool started;
+	bool sold;
+	bool recievership;
+	bool cities[maxCities];
+	int trains[maxTrains]; // 0 = never owned, 1=owned, -1 = scrapped
+};
+
+Company BO = { "Baltimore & Ohio", 0,0,5,10,0,6,0,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+Company BM = {"Boston & Maine", 0,0,5,10,0,6,1,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+Company CO = { "Chesapeake & Ohio",0,0,5,10,0,6,2,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+Company ER = { "Erie", 0,0,5,10,0,6,3,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+Company IC = { "Illinois Central", 0,0,5,10,0,6,4,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+Company NY = { "New York Central", 0,0,5,10,0,6,5,0,0,
+	false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+Company NP = { "Nickel Plate", 0,0,5,10,0,6,6,0,0};
+Company NH = { "New York New Haven & Hartford", 0,0,5,10,0,6,7,0,0};
+Company PN = {  "Pennsylvania", 0,0,5,10,0,6,8,0,0};
+Company WB;
+
+Company companies[maxCompanies];
+
+// Structure of arrays
+struct Trains
+{
+
+	const int cost[30] = { 100, 95,90,85,80,140,130,120,110,100,200,185,170,155,135,280,260,240,220,200,380,355,330,305,280,500,470,440,410,380 };
+	const int level[30] = { 1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6 };
+	const int scrap[30] = { 20,20,20,20,20,40,40,40,40,40,60,60,60,60,60,80,80,80,80,80,100,100,100,100,100,120,120,120,120,120 };
+	const int number[30] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30 };
+
+};
+
+Trains train;
+
+
+struct Cities
+{
+	const string name[maxCities] = { "Albany", "Augusta", "Baltimore", "Boston", "Buffalo", "Burlington", "Cairo", "Chicago", "Cincinnati", "Cleveland", "Concord", "Detroit", "Dover", "FortWayne", "Harrisburg", "Hartford", "Hunington", "Indainapolis", "Lexington", "Lousiville", "NewHaven", "NewYork", "Norfolk", "Philadelphia", "Pittsburg", "Portsmouth", "Provience", "Richmond", "Roanoke", "SaintLouis", "Springfield", "Syracuse", "Utica", "Washington", "Wheeling", "Coal1", "Coal2", "Coal3", "Coal4", "Coal5" };
+};
+
+Cities cities;
 
 // Function Declarations
 int setupPlayers(string playerName[], int playerCash[], int playerTurnorder[]);
@@ -172,6 +231,46 @@ int main()
 	int playerSuccess;
 	string wfileName;
 	char option;
+
+	// initialize company values
+	for (int k = 0; k < maxCities; k++)
+	{
+		NP.cities[k] = NH.cities[k] = PN.cities[k] = false;
+	}
+	for (int k = 0; k < maxCities; k++)
+	{
+		NP.trains[k] = NH.trains[k] = PN.trains[k] = 0;
+	}
+
+
+	WB = BO;
+	WB.name = "Wabash";
+	WB.order = 9;
+
+	for (int j = 0; j < maxCompanies; j++)
+	{
+		companies[j].cash = 0;
+		companies[j].netprofit = 0;
+		companies[j].valuation = 0;
+		companies[j].shares = 10;
+		companies[j].orphans = 0;
+		companies[j].president = maxPlayers;
+		companies[j].order = j;
+		companies[j].started = false;
+		companies[j].recievership = false;
+		for (int k = 0; k < maxCities; k++)
+		{
+			companies[j].cities[k] = false;
+		}
+		for (int k = 0; k < maxCities; k++)
+		{
+			companies[j].trains[k] = 0;
+		}
+	}
+
+
+
+
 
 	cout << "BO Banker Program \n \n";
 	//  Set up
@@ -901,21 +1000,28 @@ int fetchFileData(string pfileName, int orderPlayers[])
 	}
 	findEOL(inDataStream);
 	getChar = readValue(inDataStream, testArray);
-	for (int k = 0; k < 30; k++)
+	for (int m = 0; m < maxCities; m++) // Read cities
 	{
 		getChar = readValue(inDataStream, testArray);
+		for (int j = 0; j < maxCompanies; j++)
+		{
+			getChar = readValue(inDataStream, testArray);
+			if (atoi(testArray) == 1)
+				companies[j].cities[m]=1;
+			else
+				companies[j].cities[m] = 0;
+		}
+		findEOL(inDataStream);
 	}
-	findEOL(inDataStream);
-	getChar = readValue(inDataStream, testArray);
-	for (int k = 0; k < 30; k++)
+	for (int k = 0; k < maxTrains; k++) // Read trains
 	{
 		getChar = readValue(inDataStream, testArray);
-		trainOwner[k + 1] = atoi(testArray);
-	}
-	for (int k = 0; k < 30; k++)
-	{
-		if (trainOwner[k + 1] != -1)
-			currentTechlevel = (k / 5) + 1;
+		for (int j = 0; j < maxCompanies; j++)
+		{
+			getChar = readValue(inDataStream, testArray);
+			companies[j].trains[k]= atoi(testArray);
+		}
+		findEOL(inDataStream);
 	}
 	return(currentTechlevel);
 }
@@ -1007,18 +1113,24 @@ int pushFileData(string pfileName)
 		outDataStream << companyTurnorder[j] << ",";
 	}
 	outDataStream << "\n";
-	outDataStream << "Trains, ";
-	for (int k = 0; k < 30; k++) // Save train numbers
+	for (int m = 0; m < maxCities; m++) // Save cities
+	{
+		outDataStream << cities.name[m] << ",";
+		for (int j = 0; j < maxCompanies; j++)
+		{
+			outDataStream << companies[j].cities[m] << ",";
+		}
+		outDataStream << "\n";
+	}
+	for (int k = 0; k < maxTrains; k++) // Save trains
 	{
 		outDataStream << k + 1 << ",";
+		for (int j = 0; j < maxCompanies; j++)
+		{
+			outDataStream << companies[j].trains[k] << ",";
+		}
+		outDataStream << "\n";
 	}
-	outDataStream << "\n";
-	outDataStream << "Owners, ";
-	for (int k = 0; k < 30; k++) // Save train owners
-	{
-		outDataStream << trainOwner[k + 1] << ",";
-	}
-	outDataStream << "\n";
 	outDataStream.close();
 	return(currentTechlevel);
 }
